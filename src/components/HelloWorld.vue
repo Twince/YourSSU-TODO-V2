@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <p class="main_title">Vanilla Js DRAG & DROP TODO</p>
+        <p class="main_title">Vanilla Js DRAG & DROP Todo List 구현(50점)</p>
+        <div class="divide-line">
         <div class="todo_list_box">
             <div class="none box-detail">
                 <div v-for="(item, index) in noneArr" v-bind:key="item">
@@ -22,7 +23,7 @@
             </div>
             <div ref="itemBlock" class="ready box-detail"></div>
             <div class="ongoing box-detail"></div>
-            <div class="done box-detail"></div>
+            <div class="done box-detail">
         </div>
     </div>
 </template>
@@ -30,8 +31,8 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 
-const noneArr = ref([]);
-const rawInput = ref();
+const noneArr = ref([]); //대기 배열
+const rawInput = ref(); //input 입력
 const flag = ref(false);
 const selectElement = ref();
 
@@ -85,20 +86,33 @@ const addTodo = () => {
     width: 100vw;
     height: 100vh;
 
+    background-color: #FCFCFD;
     display: block;
 }
 
 .main_title {
     margin: 0 auto;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    text-align: center;
 
     font-size: 30px;
     font-weight: 700;
 }
 
+.divide-line{
+    width: 70%;
+
+    padding: 0 10px;
+
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.335), rgba(0, 0, 0, 0));
+}
+
 .todo_list_box {
     display: block;
+    margin: 0 auto;
 
-    width: 1200px;
+    width: 1100px;
     height: 500px;
 
     display: flex;
