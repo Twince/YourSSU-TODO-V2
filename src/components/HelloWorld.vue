@@ -9,7 +9,7 @@
                 <button class="view-button">+보기추가</button>
             </div>
         </div>
-        <div class="divide-line" div />
+        <div class="divide-line2" div />
 
         <div class="todo_list_box">
             <div class="none box-detail">
@@ -41,7 +41,7 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 
-const noneArr = ref([]); //대기 배열
+const noneArr = ref([]); //대기열 배열
 const rawInput = ref(); //input 입력
 const flag = ref(false);
 const selectElement = ref();
@@ -54,39 +54,37 @@ const mousePosition = ref({
 const mouseDown = (e) => {
     flag.value = true;
     selectElement.value = e.target;
-    e.target.parentElement.style.height = "0px";
+    e.target.parentElement.style.height = "0px"; // 에니메이션을 주기 위해 .item-container를 0px로 변경.
 
-    mousePosition.value.left = e.offsetX;
+    mousePosition.value.left = e.offsetX; // 이벤트의 대상
     mousePosition.value.top = e.offsetY;
-};
+}; // 마우스의 클릭을 감지(드래그)
 
 window.addEventListener("mousemove", (e) => {
-    if (!flag.value) return;
-    e.preventDefault();
+    if (!flag.value) return; //마우스 클릭이 아닐 시 함수 실행 취소
+    e.preventDefault(); // 클릭 왜 모든 이벤트 막기
 
     // document.querySelector()
-    selectElement.value.style.position = "absolute";
-    selectElement.value.style.left = `${
-        e.clientX - mousePosition.value.left
-    }px`;
-    selectElement.value.style.top = `${e.clientY - mousePosition.value.top}px`;
+    selectElement.value.style.position = "absolute"; // 클릭된 엘리먼트의 absolute 포지션 지정
+    selectElement.value.style.left = `${e.clientX - mousePosition.value.left}px`; // 선택된 엘리먼트(아이템)의 위치를 마우스 포지션으로 변경
+    selectElement.value.style.top = `${e.clientY - mousePosition.value.top}px`; // 마우스 위치 기준으로 이동시키기 위해 선택된 엘리먼트의 위치를 뺴기
 });
 
 window.addEventListener("mouseup", (e) => {
-    if (!flag.value) return;
-    flag.value = false;
-    console.log(e.target, e.offsetY, e.target.classList[0]);
-    selectElement.value.parentElement.style.height = "60px";
+    if (!flag.value) return; // 드래그중이 아닐 시 함수 실행 취소
+    flag.value = false; // 드래그가 종료되었으므로 flag 변환
+    console.log(e.target, e.offsetY, e.target.classList[0]); //mouseup즉, 드래그가 끝난 엘리먼트를 e로 가져오기
+    selectElement.value.parentElement.style.height = "70px"; // item-continer에 공간 차지
 
-    selectElement.value.style.position = "";
+    selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
 });
 
 watchEffect(() => {
-    console.log(flag.value);
+    console.log(flag.value); // 플레그 디버그를 위한 console.log
 });
 
 const addTodo = () => {
-    noneArr.value.push(rawInput.value);
+    noneArr.value.push(rawInput.value); // 입력된 값을 배열에 출력
     console.log(noneArr.value);
 };
 </script>
@@ -121,12 +119,20 @@ const addTodo = () => {
     width: 100%;
     height: 1px;
 
-    margin: 0 auto;;
+    margin: 0 auto;
     margin-bottom: 10px;
 
     background-color: rgb(211, 211, 211);
 
     /* background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.335), rgba(0, 0, 0, 0)); */
+}
+.divide-line2{
+    width: 80%;
+    height: 1px;
+
+    margin: 0 auto;
+    margin-bottom: 10px;
+    background-color: rgb(211, 211, 211);
 }
 
 .middle-text{
@@ -183,7 +189,7 @@ const addTodo = () => {
 
     margin: 0 auto;
 
-    width: 305  px;
+    width: 305px;
     height: 70px;
 
     margin-top: 10px;
