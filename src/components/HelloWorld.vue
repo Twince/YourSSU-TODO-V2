@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <p class="main_title">Vanilla Js DRAG & DROP Todo List 구현(50점)</p>
-        <div class="divide-line">
+        <div class="divide-line" div />
         <div class="todo_list_box">
             <div class="none box-detail">
                 <div v-for="(item, index) in noneArr" v-bind:key="item">
@@ -24,6 +24,7 @@
             <div ref="itemBlock" class="ready box-detail"></div>
             <div class="ongoing box-detail"></div>
             <div class="done box-detail">
+            </div>
         </div>
     </div>
 </template>
