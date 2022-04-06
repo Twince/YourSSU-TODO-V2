@@ -1,7 +1,16 @@
 <template>
     <div class="container">
-        <p class="main_title">Vanilla Js DRAG & DROP Todo List 구현(50점)</p>
+        <div class="title-section">
+            <p class="main_title">Vanilla JS DRAG & DROP Todo List 구현(50점)</p>
+            <div class="divide-line" div />
+            
+            <div class="flex-row">
+                <p class="middle-text">Todo List</p>
+                <button class="view-button">+보기추가</button>
+            </div>
+        </div>
         <div class="divide-line" div />
+
         <div class="todo_list_box">
             <div class="none box-detail">
                 <div v-for="(item, index) in noneArr" v-bind:key="item">
@@ -83,6 +92,7 @@ const addTodo = () => {
 </script>
 
 <style scope>
+.flex-row{ display: flex; flex-direction: row; }
 .container {
     width: 100vw;
     height: 100vh;
@@ -91,29 +101,51 @@ const addTodo = () => {
     display: block;
 }
 
-.main_title {
+.title-section{
+    display: block;
+    
     margin: 0 auto;
-    padding-top: 50px;
-    padding-bottom: 10px;
-    text-align: center;
 
-    font-size: 30px;
+    width: 800px;
+}
+
+.main_title {
+    padding-top: 50px;
+    margin-bottom: 10px;
+
+    font-size: 35px;
     font-weight: 700;
 }
 
 .divide-line{
-    width: 70%;
+    width: 100%;
+    height: 1px;
 
-    padding: 0 10px;
+    margin: 0 auto;;
+    margin-bottom: 10px;
 
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.335), rgba(0, 0, 0, 0));
+    background-color: rgb(211, 211, 211);
+
+    /* background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.335), rgba(0, 0, 0, 0)); */
+}
+
+.middle-text{
+    display: block;
+
+    margin: 0 0 0 3px;
+    font-size: 27px;
+    font-weight: 700;
+}
+
+.view-button{
+    display: block;
 }
 
 .todo_list_box {
     display: block;
     margin: 0 auto;
 
-    width: 1100px;
+    width: 1300px;
     height: 500px;
 
     display: flex;
@@ -128,7 +160,7 @@ const addTodo = () => {
 .box-detail {
     display: block;
 
-    width: 250px;
+    width: 320px;
     height: 400px;
 
     display: flex;
@@ -142,15 +174,17 @@ const addTodo = () => {
 .item-container {
     transition: height 0.5s;
 
-    width: 200px;
-    height: 60px;
+    width: 310px;
+    height: 70px;
 }
 
 .item {
     display: block;
 
-    width: 200px;
-    height: 60px;
+    margin: 0 auto;
+
+    width: 305  px;
+    height: 70px;
 
     margin-top: 10px;
 
