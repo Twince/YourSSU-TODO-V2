@@ -30,7 +30,7 @@
                     <button @click="addTodo" class="commit">test</button>
                 </div>
             </div>
-            <div ref="itemBlock" @mouseup="mouseup" class="ready box-detail"></div>
+            <div ref="itemBlock" class="ready box-detail"></div>
             <div class="ongoing box-detail"></div>
             <div class="done box-detail">
             </div>
@@ -58,6 +58,8 @@ const mouseDown = (e) => {
 
     mousePosition.value.left = e.offsetX; // 이벤트의 대상
     mousePosition.value.top = e.offsetY;
+
+    console.log(document.querySelectorAll(".box-detail"));
 }; // 마우스의 클릭을 감지(드래그)
 
 window.addEventListener("mousemove", (e) => {
@@ -70,19 +72,30 @@ window.addEventListener("mousemove", (e) => {
     selectElement.value.style.top = `${e.clientY - mousePosition.value.top}px`; // 마우스 위치 기준으로 이동시키기 위해 선택된 엘리먼트의 위치를 뺴기
 });
 
-window.addEventListener("mouseup", (e) => {
+window.addEventListener("mouseup", () => {
     if (!flag.value) return; // 드래그중이 아닐 시 함수 실행 취소
     flag.value = false; // 드래그가 종료되었으므로 flag 변환
-    console.log(e.target, e.offsetY); //mouseup즉, 드래그가 끝난 엘리먼트를 e로 가져오기 .classList[0]
-    console.log("------");
-    console.log(e.target);
-
     selectElement.value.parentElement.style.height = "70px"; // item-continer에 공간 차지
-
     selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
-
     // moveTodo();
 });
+
+window.addEventListener("load", () => {
+        document.querySelectorAll(".box-detail").forEach(box => {
+        console.log(box);
+        box.addEventListener("mouseup", (e) => {
+            console.log(e.currentTarget);
+        })
+    })
+})
+
+//  document.addEventListener("drop", function(e) {
+//       // prevent default action (open as link for some elements)
+//       e.preventDefault();
+//       console.log(e.target);
+//       // move dragged elem to the selected drop target
+    
+//   }, false);
 
 watchEffect(() => {
     console.log(flag.value); // 플레그 디버그를 위한 console.log
