@@ -30,7 +30,7 @@
                     <button @click="addTodo" class="commit">test</button>
                 </div>
             </div>
-            <div ref="itemBlock" class="ready box-detail"></div>
+            <div ref="itemBlock" @mouseup="mouseup" class="ready box-detail"></div>
             <div class="ongoing box-detail"></div>
             <div class="done box-detail">
             </div>
@@ -73,16 +73,24 @@ window.addEventListener("mousemove", (e) => {
 window.addEventListener("mouseup", (e) => {
     if (!flag.value) return; // 드래그중이 아닐 시 함수 실행 취소
     flag.value = false; // 드래그가 종료되었으므로 flag 변환
-    console.log(e.target, e.offsetY, e.target.classList[0]); //mouseup즉, 드래그가 끝난 엘리먼트를 e로 가져오기
+    console.log(e.target, e.offsetY); //mouseup즉, 드래그가 끝난 엘리먼트를 e로 가져오기 .classList[0]
+    console.log("------");
+    console.log(e.target);
+
     selectElement.value.parentElement.style.height = "70px"; // item-continer에 공간 차지
 
     selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
+
+    // moveTodo();
 });
 
 watchEffect(() => {
     console.log(flag.value); // 플레그 디버그를 위한 console.log
 });
 
+// const moveTodo = () => {
+
+// }
 const addTodo = () => {
     noneArr.value.push(rawInput.value); // 입력된 값을 배열에 출력
     console.log(noneArr.value);
@@ -158,7 +166,7 @@ const addTodo = () => {
     flex-direction: row;
 
     justify-content: space-around;
-    align-items: center;
+    /* align-items: center; */
 
     background-color: rgb(163, 163, 163);
 }
@@ -192,7 +200,7 @@ const addTodo = () => {
     width: 305px;
     height: 70px;
 
-    margin-top: 10px;
+    margin-top: 15px;
 
     border-radius: 7px;
     background-color: rgb(158, 117, 117);
