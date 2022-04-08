@@ -17,15 +17,15 @@
             <div id="none" class="none box-detail">
                 <div
                     class="item"
-                    v-for="(item, index) in noneArr"
-                    v-bind:key="item"
+                    v-for="(item, index) in TodoStatus.noneArr"
+                    v-bind:key="index"
                     v-bind:id="index"
                     ref="itemBlock"
                     @mousedown="mouseDown"
                     draggable="true"
                     @dragstart="onDragStart"
                 >
-                    {{ index }}, {{ noneArr[index] }}
+                    {{ index }}, {{ item }}
                 </div>
 
                 <div class="add-item">
@@ -39,7 +39,20 @@
                 class="ready box-detail"
                 @dragover="onDragover"
                 @drop="onDrop"
-            ></div>
+            >
+                <div
+                    class="item"
+                    v-for="(item, index) in TodoStatus"
+                    v-bind:key="index"
+                    v-bind:id="index"
+                    ref="itemBlock"
+                    @mousedown="mouseDown"
+                    draggable="true"
+                    @dragstart="onDragStart"
+                >
+                    {{ index }}, {{ item }}
+                </div>
+            </div>
             <div
                 id="ongoing"
                 class="ongoing box-detail"
@@ -59,10 +72,17 @@
 <script setup>
 import { ref, watchEffect } from "vue";
 
-const noneArr = ref([]); //대기열 배열
+const TodoStatus = ref({
+    noneArr : [], // 대기열 배열
+    ready : [],
+    ongoing : [],
+    done : [],
+})
+// const readyArr = ref([]);
 const rawInput = ref(); //input 입력
 const flag = ref(false);
 const selectElement = ref();
+const previousArr = ref(); // 옮겨진 대상의 배열 이름
 
 const mousePosition = ref({
     left: 0,
@@ -123,31 +143,55 @@ watchEffect(() => {
 
 // }
 const onDragStart = (e) => {
-    console.log("여기에요!");
-    console.log(e.target.parentElement.classList[0]);
+    // console.log("여기에요!" + e.target.parentElement.classList[0]);
     e.dataTransfer.setData(
         "test",
         JSON.stringify({
             targetID: e.target.id,
-            ownArr: e.target.parentElement.classList[0],
-        })
+            previousArrName: e.target.parentElement.classList[0],
+        }) //setData에 파라미터는 string값만 받으므로, JSON.stringify로 문자열 변환
     );
 };
 
 const onDragover = (e) => {
-    e.preventDefault(); // 기본적으로 드래그를 막고 있던 이벤트를 막음.
+    e.preventDefault(); // 기본적으로 드래그를 막고 있던 이벤트를 막음. -> 드래그를 가능하게 함.
 };
 
 const onDrop = (e) => {
+    console.log("전 배열 이름 저장" + previousArr.value);
     console.log(e.dataTransfer.getData("test"));
     console.log("온드롭 실행함.");
     console.log(e.target.id);
-    console.log(JSON.parse(e.dataTransfer.getData("test")).targetID);
+    console.log(JSON.parse(e.dataTransfer.getData("test")).targetID); // JSON.parse로 sringify를 JSON형태로 되돌림.
+
+    if(JSON.parse(e.dataTransfer.getData("test")).previousArrName == "none") { // TODO를 가져온 값의 아이디가 none일때
+        if(Object.keys(TodoStatus.value)[1] == e.target.id){
+            TodoStatus.value.ready.push(TodoStatus.value.noneArr.slice(e.dataTransfer.getData("test").targetID, 1));
+            // index 1번은 ready
+            console.log("똑같다!"+TodoStatus.value);
+        }
+        TodoStatus.value.noneArr.splice(e.dataTransfer.getData("test").targetID, 1)
+        console.log("slice완료" + TodoStatus.value.noneArr);
+        console.log(TodoStatus.value);
+        
+        
+
+        console.log("키 이름"+Object.keys(TodoStatus.value)[1]); // 1번 인덱스는 ready
+    }
+
+    // const index = JSON.parse(e.dataTransfer.getData("test")).targetID
+    // const cutedData = previousArr.value + "Arr".value.slice(index, 1); // 전값 이름 + Arr.slice(index(targetID), 1)
+
+   
+    // // e.dataTransfer.getData("test")
+    // e.target.id + "Arr".push(cutedData);
 };
 
 const addTodo = () => {
-    noneArr.value.push(rawInput.value); // 입력된 값을 배열에 출력
-    console.log(noneArr.value);
+    console.log(rawInput.value);
+    // console.log(TodoStatus.value.noneArr[0]);
+    TodoStatus.value.noneArr = TodoStatus.value.noneArr.concat(rawInput.value); // 입력된 값을 배열에 출력
+    console.log(TodoStatus.value);
 };
 </script>
 
