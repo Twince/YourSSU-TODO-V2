@@ -1,15 +1,15 @@
 <template>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <DraggableTodo />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import DraggableTodo from './components/DraggableTodo.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    DraggableTodo
+  },
 }
 </script>
 
