@@ -14,7 +14,13 @@
         <div class="divide-line2" div />
 
         <div class="todo_list_box">
-            <div id="none" class="none box-detail">
+            <!-- none 배열 영역 -->
+            <div
+                id="none"
+                class="box-detail"
+                @dragover="onDragover"
+                @drop="onDrop"
+            >
                 <div
                     class="item"
                     v-for="(item, index) in TodoStatus.noneArr"
@@ -29,20 +35,51 @@
                 </div>
 
                 <div class="add-item">
-                    <input class="value-input" v-model="rawInput" />
-                    <button @click="addTodo" class="commit">test</button>
+                    <input class="value-input" v-model="noneRawInput" />
+                    <button @click="noneSection__AddTodo" class="commit">test</button>
                 </div>
             </div>
+
+            <!-- ready 배열 영역 -->
             <div
                 ref="itemBlock"
                 id="ready"
-                class="ready box-detail"
+                class="box-detail"
                 @dragover="onDragover"
                 @drop="onDrop"
             >
                 <div
                     class="item"
-                    v-for="(item, index) in TodoStatus"
+                    v-for="(item, index) in TodoStatus.readyArr"
+                    v-bind:key="index"
+                    v-bind:id="index"
+                    ref="itemBlock"
+                    @mousedown="mouseDown"
+                    draggable="true"
+                    @dragstart="onDragStart"
+                >
+                    {{ index }}, {{ item }}
+                </div>
+
+                <div class="add-item">
+                    <input
+                        class="value-input"
+                        v-model="readyRawInput"
+                    />
+                    <button @click="readySection__AddTodo" class="commit">test</button>
+                </div>
+            </div>
+
+            <!-- ongoing 배열 영역 -->
+            <div
+                id="ongoing"
+                class="box-detail"
+                @dragover="onDragover"
+                @drop="onDrop"
+            >
+                <div
+                    class="item"
+                    v-for="(item, index) in TodoStatus.ongoingArr"
                     v-bind:key="index"
                     v-bind:id="index"
                     ref="itemBlock"
@@ -54,18 +91,26 @@
                 </div>
             </div>
             <div
-                id="ongoing"
-                class="ongoing box-detail"
-                @dragover="onDragover"
-                @drop="onDrop"
-            ></div>
-            <div
                 id="done"
-                class="done box-detail"
+                class="box-detail"
                 @dragover="onDragover"
                 @drop="onDrop"
-            ></div>
+            >
+                <div
+                    class="item"
+                    v-for="(item, index) in TodoStatus.doneArr"
+                    v-bind:key="index"
+                    v-bind:id="index"
+                    ref="itemBlock"
+                    @mousedown="mouseDown"
+                    draggable="true"
+                    @dragstart="onDragStart"
+                >
+                    {{ index }}, {{ item }}
+                </div>
+            </div>
         </div>
+        {{ TodoStatus }}
     </div>
 </template>
 
@@ -73,16 +118,22 @@
 import { ref, watchEffect } from "vue";
 
 const TodoStatus = ref({
-    noneArr : [], // 대기열 배열
-    ready : [],
-    ongoing : [],
-    done : [],
-})
+    noneArr: [], // 대기열 배열
+    readyArr: [],
+    ongoingArr: [],
+    doneArr: [],
+});
 // const readyArr = ref([]);
-const rawInput = ref(); //input 입력
+
+const noneRawInput = ref(); //input 입력
+const readyRawInput = ref();
+// const ongoingawInput = ref();
+// const doneRawInput = ref();
+
+
 const flag = ref(false);
 const selectElement = ref();
-const previousArr = ref(); // 옮겨진 대상의 배열 이름
+// const previousArr = ref(); // 옮겨진 대상의 배열 이름
 
 const mousePosition = ref({
     left: 0,
@@ -96,8 +147,6 @@ const mouseDown = (e) => {
 
     mousePosition.value.left = e.offsetX; // 이벤트의 대상
     mousePosition.value.top = e.offsetY;
-
-    console.log(document.querySelectorAll(".box-detail"));
 }; // 마우스의 클릭을 감지(드래그)
 
 // window.addEventListener("mousemove", (e) => {
@@ -118,14 +167,14 @@ window.addEventListener("mouseup", () => {
     // moveTodo();
 });
 
-window.addEventListener("load", () => {
-    document.querySelectorAll(".box-detail").forEach((box) => {
-        console.log(box);
-        box.addEventListener("mouseup", (e) => {
-            console.log(e.currentTarget);
-        });
-    });
-});
+// window.addEventListener("load", () => {
+//     document.querySelectorAll(".box-detail").forEach((box) => {
+//         console.log(box);
+//         box.addEventListener("mouseup", (e) => {
+//             // console.log(e.currentTarget);
+//         });
+//     });
+// });
 
 //  document.addEventListener("drop", function(e) {
 //       // prevent default action (open as link for some elements)
@@ -137,6 +186,7 @@ window.addEventListener("load", () => {
 
 watchEffect(() => {
     console.log(flag.value); // 플레그 디버그를 위한 console.log
+    console.log(TodoStatus.value);
 });
 
 // const moveTodo = () => {
@@ -148,7 +198,7 @@ const onDragStart = (e) => {
         "test",
         JSON.stringify({
             targetID: e.target.id,
-            previousArrName: e.target.parentElement.classList[0],
+            previousArrName: e.target.parentElement.id,
         }) //setData에 파라미터는 string값만 받으므로, JSON.stringify로 문자열 변환
     );
 };
@@ -158,41 +208,110 @@ const onDragover = (e) => {
 };
 
 const onDrop = (e) => {
-    console.log("전 배열 이름 저장" + previousArr.value);
-    console.log(e.dataTransfer.getData("test"));
-    console.log("온드롭 실행함.");
-    console.log(e.target.id);
-    console.log(JSON.parse(e.dataTransfer.getData("test")).targetID); // JSON.parse로 sringify를 JSON형태로 되돌림.
+    // console.log("전 배열 이름 저장" + previousArr.value);
+    // console.log(e.dataTransfer.getData("test"));
+    // console.log("온드롭 실행함.");
+    // console.log(e.target.id);
+    // console.log(JSON.parse(e.dataTransfer.getData("test")).targetID); // JSON.parse로 sringify를 JSON형태로 되돌림.
 
-    if(JSON.parse(e.dataTransfer.getData("test")).previousArrName == "none") { // TODO를 가져온 값의 아이디가 none일때
-        if(Object.keys(TodoStatus.value)[1] == e.target.id){
-            TodoStatus.value.ready.push(TodoStatus.value.noneArr.slice(e.dataTransfer.getData("test").targetID, 1));
-            // index 1번은 ready
-            console.log("똑같다!"+TodoStatus.value);
+    const previousArrIndex = JSON.parse(
+        e.dataTransfer.getData("test")
+    ).targetID; // 이전 배열에서 선택(끌어온) 인덱스
+    const previousArrName = JSON.parse(
+        e.dataTransfer.getData("test")
+    ).previousArrName;
+
+    // e.target.id detail-box즉 todo를 놓는 배경 박스
+    // Object.keys(TodoStatus.value)[1] : TodoStatus Object nonArr 이름
+
+    console.log("onDrop 된 개체에 ID :" + e.target.id);
+    if (previousArrName == "none") { // TODO를 가져온 값의 아이디가 none일때
+        if (Object.keys(TodoStatus.value)[1] == e.target.id + "Arr") { // 가져다가 놓은 위치가 ready일때
+            console.log("ready에다가 놓았음!");
+            TodoStatus.value.readyArr.push(
+                TodoStatus.value.noneArr[previousArrIndex]
+            );
+
+            TodoStatus.value.noneArr.splice(previousArrIndex, 1);
+            console.log("slice완료" + TodoStatus.value.noneArr);
         }
-        TodoStatus.value.noneArr.splice(e.dataTransfer.getData("test").targetID, 1)
-        console.log("slice완료" + TodoStatus.value.noneArr);
-        console.log(TodoStatus.value);
-        
-        
+        console.log("키 이름" + Object.keys(TodoStatus.value)[1]); // 1번 인덱스는 ready
 
-        console.log("키 이름"+Object.keys(TodoStatus.value)[1]); // 1번 인덱스는 ready
+        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr") { // 가져다가 놓은 위치가 ongoing일때
+            console.log("ongoing에다가 놓았음!");
+            TodoStatus.value.ongoingArr.push(
+                TodoStatus.value.noneArr[previousArrIndex]
+            );
+            TodoStatus.value.noneArr.splice(previousArrIndex, 1);
+            console.log("slice완료" + TodoStatus.value.noneArr);
+        }
+
+        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr") { // 가져다가 놓은 위치가 done일때
+            console.log("ongoing에다가 놓았음!");
+            TodoStatus.value.doneArr.push(
+                TodoStatus.value.noneArr[previousArrIndex]
+            );
+            TodoStatus.value.noneArr.splice(previousArrIndex, 1);
+            console.log("slice완료" + TodoStatus.value.noneArr);
+        }
     }
+
+
+    if (previousArrName == "ready") { // TODO를 가져온 값의 아이디가 ready일때
+        if (Object.keys(TodoStatus.value)[0] == e.target.id + "Arr") { // 가져다가 놓은 위치가 none일때
+            TodoStatus.value.noneArr.push(TodoStatus.value.readyArr[previousArrIndex]);
+        }
+
+        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr") { // 가져다가 놓은 위치가 ongoing일때
+            // console.log(TodoStatus.value.eval(`ongoingArr`)); // eval을 이용하여 변수명을 함수로 적용시키려 했으나 안됨
+            TodoStatus.value.ongoingArr.push(
+                TodoStatus.value.readyArr[previousArrIndex]
+            );
+        }
+
+        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr") { // 가져다가 놓은 위치가 done일때
+            TodoStatus.value.doneArr.push(
+                TodoStatus.value.readyArr[previousArrIndex]
+            );
+        }
+        TodoStatus.value.readyArr.splice(previousArrIndex, 1);
+    }
+
+    // if (previousArrName == "ready") {
+    //     if(Object.keys(TodoStatus.value[2]))
+    // }
+
+
+
+
+
 
     // const index = JSON.parse(e.dataTransfer.getData("test")).targetID
     // const cutedData = previousArr.value + "Arr".value.slice(index, 1); // 전값 이름 + Arr.slice(index(targetID), 1)
 
-   
     // // e.dataTransfer.getData("test")
     // e.target.id + "Arr".push(cutedData);
 };
 
-const addTodo = () => {
-    console.log(rawInput.value);
-    // console.log(TodoStatus.value.noneArr[0]);
-    TodoStatus.value.noneArr = TodoStatus.value.noneArr.concat(rawInput.value); // 입력된 값을 배열에 출력
+const noneSection__AddTodo = (e) => {
+    console.log("nonRawInput 에 들어가는 값.");
+    console.log(noneRawInput.value);
+    TodoStatus.value.noneArr.push(noneRawInput.value);
+    
+    console.log("addtdtd");
+    console.log(e.target.parentElement.parentElement.id); // 입력한 값이 포함되어 있는 box-detail
+
+    noneRawInput.value = "";
     console.log(TodoStatus.value);
 };
+
+const readySection__AddTodo = (e) => {
+    TodoStatus.value.readyArr.push(readyRawInput.value);
+    readyRawInput.value = "";
+    e
+};
+
+
 </script>
 
 <style scope>
@@ -280,26 +399,32 @@ const addTodo = () => {
 
     display: flex;
     flex-direction: column;
-
     align-items: center;
 
+    overflow: auto;
+    -ms-overflow-style: none;
+
     background-color: rgb(197, 134, 134);
+}
+
+.box-detail::-webkit-scrollbar {
+    display: none;
 }
 
 .item {
     display: block;
 
-    margin: 0 auto;
-
     width: 305px;
     height: 70px;
+
+    flex-shrink: 0;
 
     margin-top: 15px;
 
     border-radius: 7px;
     background-color: rgb(158, 117, 117);
 
-    cursor: move;
+    /* cursor: move; */
 }
 
 .vavlue-input {
