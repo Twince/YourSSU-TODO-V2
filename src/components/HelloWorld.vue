@@ -36,7 +36,9 @@
 
                 <div class="add-item">
                     <input class="value-input" v-model="noneRawInput" />
-                    <button @click="noneSection__AddTodo" class="commit">test</button>
+                    <button @click="noneSection__AddTodo" class="commit">
+                        test
+                    </button>
                 </div>
             </div>
 
@@ -62,11 +64,10 @@
                 </div>
 
                 <div class="add-item">
-                    <input
-                        class="value-input"
-                        v-model="readyRawInput"
-                    />
-                    <button @click="readySection__AddTodo" class="commit">test</button>
+                    <input class="value-input" v-model="readyRawInput" />
+                    <button @click="readySection__AddTodo" class="commit">
+                        test
+                    </button>
                 </div>
             </div>
 
@@ -89,6 +90,12 @@
                 >
                     {{ index }}, {{ item }}
                 </div>
+                <div class="add-item">
+                    <input class="value-input" v-model="ongoingRawInput" />
+                    <button @click="ongoingSection__AddTodo" class="commit">
+                        test
+                    </button>
+                </div>
             </div>
             <div
                 id="done"
@@ -107,6 +114,12 @@
                     @dragstart="onDragStart"
                 >
                     {{ index }}, {{ item }}
+                </div>
+                <div class="add-item">
+                    <input class="value-input" v-model="doneRawInput" />
+                    <button @click="doneSection__AddTodo" class="commit">
+                        test
+                    </button>
                 </div>
             </div>
         </div>
@@ -127,9 +140,8 @@ const TodoStatus = ref({
 
 const noneRawInput = ref(); //input 입력
 const readyRawInput = ref();
-// const ongoingawInput = ref();
-// const doneRawInput = ref();
-
+const ongoingRawInput = ref();
+const doneRawInput = ref();
 
 const flag = ref(false);
 const selectElement = ref();
@@ -225,8 +237,10 @@ const onDrop = (e) => {
     // Object.keys(TodoStatus.value)[1] : TodoStatus Object nonArr 이름
 
     console.log("onDrop 된 개체에 ID :" + e.target.id);
-    if (previousArrName == "none") { // TODO를 가져온 값의 아이디가 none일때
-        if (Object.keys(TodoStatus.value)[1] == e.target.id + "Arr") { // 가져다가 놓은 위치가 ready일때
+    if (previousArrName == "none") {
+        // TODO를 가져온 값의 아이디가 none일때
+        if (Object.keys(TodoStatus.value)[1] == e.target.id + "Arr") {
+            // 가져다가 놓은 위치가 ready일때
             console.log("ready에다가 놓았음!");
             TodoStatus.value.readyArr.push(
                 TodoStatus.value.noneArr[previousArrIndex]
@@ -237,7 +251,8 @@ const onDrop = (e) => {
         }
         console.log("키 이름" + Object.keys(TodoStatus.value)[1]); // 1번 인덱스는 ready
 
-        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr") { // 가져다가 놓은 위치가 ongoing일때
+        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr") {
+            // 가져다가 놓은 위치가 ongoing일때
             console.log("ongoing에다가 놓았음!");
             TodoStatus.value.ongoingArr.push(
                 TodoStatus.value.noneArr[previousArrIndex]
@@ -246,7 +261,8 @@ const onDrop = (e) => {
             console.log("slice완료" + TodoStatus.value.noneArr);
         }
 
-        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr") { // 가져다가 놓은 위치가 done일때
+        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr") {
+            // 가져다가 놓은 위치가 done일때
             console.log("ongoing에다가 놓았음!");
             TodoStatus.value.doneArr.push(
                 TodoStatus.value.noneArr[previousArrIndex]
@@ -256,20 +272,25 @@ const onDrop = (e) => {
         }
     }
 
-
-    if (previousArrName == "ready") { // TODO를 가져온 값의 아이디가 ready일때
-        if (Object.keys(TodoStatus.value)[0] == e.target.id + "Arr") { // 가져다가 놓은 위치가 none일때
-            TodoStatus.value.noneArr.push(TodoStatus.value.readyArr[previousArrIndex]);
+    if (previousArrName == "ready") {
+        // TODO를 가져온 값의 아이디가 ready일때
+        if (Object.keys(TodoStatus.value)[0] == e.target.id + "Arr") {
+            // 가져다가 놓은 위치가 none일때
+            TodoStatus.value.noneArr.push(
+                TodoStatus.value.readyArr[previousArrIndex]
+            );
         }
 
-        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr") { // 가져다가 놓은 위치가 ongoing일때
+        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr") {
+            // 가져다가 놓은 위치가 ongoing일때
             // console.log(TodoStatus.value.eval(`ongoingArr`)); // eval을 이용하여 변수명을 함수로 적용시키려 했으나 안됨
             TodoStatus.value.ongoingArr.push(
                 TodoStatus.value.readyArr[previousArrIndex]
             );
         }
 
-        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr") { // 가져다가 놓은 위치가 done일때
+        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr") {
+            // 가져다가 놓은 위치가 done일때
             TodoStatus.value.doneArr.push(
                 TodoStatus.value.readyArr[previousArrIndex]
             );
@@ -277,27 +298,49 @@ const onDrop = (e) => {
         TodoStatus.value.readyArr.splice(previousArrIndex, 1);
     }
 
-    // if (previousArrName == "ready") {
-    //     if(Object.keys(TodoStatus.value[2]))
-    // }
+    if (previousArrName == "ongoing") {
+        // onging를 가져온 값의 아이디가 ready일때
+        if (Object.keys(TodoStatus.value)[0] == e.target.id + "Arr")
+            // 가져다가 놓은 위치가 none일때
+            TodoStatus.value.noneArr.push(
+                TodoStatus.value.ongoingArr[previousArrIndex]
+            );
+        if (Object.keys(TodoStatus.value)[1] == e.target.id + "Arr")
+            // 가져다가 놓은 위치가 ready일때
+            TodoStatus.value.readyArr.push(
+                TodoStatus.value.ongoingArr[previousArrIndex]
+            );
+        if (Object.keys(TodoStatus.value)[3] == e.target.id + "Arr")
+            // 가져다가 놓은 위치가 done일때
+            TodoStatus.value.doneArr.push(
+                TodoStatus.value.ongoingArr[previousArrIndex]
+            );
+        TodoStatus.value.ongoingArr.splice(previousArrIndex, 1);
+    }
 
-
-
-
-
-
-    // const index = JSON.parse(e.dataTransfer.getData("test")).targetID
-    // const cutedData = previousArr.value + "Arr".value.slice(index, 1); // 전값 이름 + Arr.slice(index(targetID), 1)
-
-    // // e.dataTransfer.getData("test")
-    // e.target.id + "Arr".push(cutedData);
+    if (previousArrName == "done") {
+        // onging를 가져온 값의 아이디가 ready일때
+        if (Object.keys(TodoStatus.value)[0] == e.target.id + "Arr")
+            TodoStatus.value.noneArr.push(
+                TodoStatus.value.doneArr[previousArrIndex]
+            );
+        if (Object.keys(TodoStatus.value)[1] == e.target.id + "Arr")
+            TodoStatus.value.readyArr.push(
+                TodoStatus.value.doneArr[previousArrIndex]
+            );
+        if (Object.keys(TodoStatus.value)[2] == e.target.id + "Arr")
+            TodoStatus.value.ongoingArr.push(
+                TodoStatus.value.doneArr[previousArrIndex]
+            );
+        TodoStatus.value.doneArr.splice(previousArrIndex, 1);
+    }
 };
 
 const noneSection__AddTodo = (e) => {
     console.log("nonRawInput 에 들어가는 값.");
     console.log(noneRawInput.value);
     TodoStatus.value.noneArr.push(noneRawInput.value);
-    
+
     console.log("addtdtd");
     console.log(e.target.parentElement.parentElement.id); // 입력한 값이 포함되어 있는 box-detail
 
@@ -305,13 +348,18 @@ const noneSection__AddTodo = (e) => {
     console.log(TodoStatus.value);
 };
 
-const readySection__AddTodo = (e) => {
+const readySection__AddTodo = () => {
     TodoStatus.value.readyArr.push(readyRawInput.value);
     readyRawInput.value = "";
-    e
 };
-
-
+const ongoingSection__AddTodo = () => {
+    TodoStatus.value.ongoingArr.push(readyRawInput.value);
+    ongoingRawInput.value = "";
+}
+const doneSection__AddTodo = () => {
+    TodoStatus.value.doneArr.push(readyRawInput.value);
+    doneRawInput.value = "";
+}
 </script>
 
 <style scope>
