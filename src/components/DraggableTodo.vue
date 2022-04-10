@@ -236,13 +236,18 @@
 
 <script setup>
 import { ref, watchEffect } from "vue";
+import axios from 'axios'
 
-
-this.axios.get('https://my-json-server.typicode.com/jaewoong2/recruiting/0').then((response) => { // 실제 API를 요청한다/
-    console.log(response.data);
-    // this.movieList = response.data.response.body.items.item; // 받아온 데이터를 movieList 배열에 넣어준다.
-    // console.log('영화목록 : ' + this.movieList);
-  })
+axios.get('https://my-json-server.typicode.com/jaewoong2/recruiting/0').then((response) => { // 실제 API를 요청한다/
+    response.data.forEach(data => {
+        if(data.state == "none") TodoStatus.value.noneArr.push(data.value);
+        else if(data.state == "ready") TodoStatus.value.readyArr.push(data.value);
+        else if(data.state == "ongoing") TodoStatus.value.ongoingArr.push(data.value);
+        else TodoStatus.value.doneArr.push(data.value);
+    });
+  }).catch((error) => {
+      console.log("데이터를 불러오는 중 오류가 발생했습니다." + error);
+})
 
 
 const TodoStatus = ref({
