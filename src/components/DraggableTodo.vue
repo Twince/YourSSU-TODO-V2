@@ -246,7 +246,7 @@ axios.get('https://my-json-server.typicode.com/jaewoong2/recruiting/0').then((re
         else TodoStatus.value.doneArr.push(data.value);
     });
   }).catch((error) => {
-      console.log("데이터를 불러오는 중 오류가 발생했습니다." + error);
+      console.log("데이터를 불러오는 중 오류가 발생했습니다 :" + error);
 })
 
 
