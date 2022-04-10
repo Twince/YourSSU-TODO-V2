@@ -543,7 +543,7 @@ const editItem = (index) => {
 const noneSection__AddTodo = () => {
     console.log("nonRawInput 에 들어가는 값.");
     console.log(noneRawInput.value);
-    noneRawInput.value != ""
+    noneRawInput.value != "" //입력한 값이 비어있지 않는다면...
         ? TodoStatus.value.noneArr.push(noneRawInput.value)
         : alert("입력창에 값을 입력해주세요!"); 
     noneRawInput.value = "";
@@ -631,7 +631,7 @@ const doneSection__AddTodo = () => {
 
     align-items: center;
 }
-/*------------ subTitle Section ---------------*/
+/*-------------------------- subTitle Section --------------------------*/
 .middle-text {
     display: block;
 
@@ -707,7 +707,7 @@ const doneSection__AddTodo = () => {
     outline: none;
 }
 
-/* -------------- TODO LIST Section ------------------*/
+/* ------------------------------------ TODO LIST Section ----------------------------------*/
 
 .inbox-title-wrapper {
     display: block;
@@ -732,7 +732,7 @@ const doneSection__AddTodo = () => {
     justify-content: space-between;
 }
 
-/* ------------------------ 시작 전, 진행 중, 완료 Title--------------------------=-- */
+/* ------------------------------ 시작 전, 진행 중, 완료 Title ------------------------------=-- */
 .start-before-title {
     border-radius: 4px;
 
@@ -1104,6 +1104,7 @@ const doneSection__AddTodo = () => {
 
     transition: 0.3s;
 }
+
 /* ------------------------------------------------------------------------------ */
 
 .slide-fade-enter-active {
