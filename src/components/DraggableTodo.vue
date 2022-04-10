@@ -23,8 +23,16 @@
                     </div>
                     <div class="search-addnew">
                         <img src="../assets/search.svg" alt="icon" />
-                        <input v-model="searchData" @change="updateSearchData" placeholder="검색" class="search-text" type="text">
-                        <p class="search-result">{{searchResult.searchResultRetrun}}</p>
+                        <input
+                            v-model="searchData"
+                            @input="updateSearchData($event)"
+                            placeholder="검색"
+                            class="search-text"
+                            type="text"
+                        />
+                        <p class="search-result">
+                            {{ searchResult.searchResultRetrun }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -153,7 +161,6 @@
                             v-bind:key="index"
                             v-bind:id="index"
                             ref="itemBlock"
-                            @mousedown="mouseDown"
                             draggable="true"
                             @dragstart="onDragStart"
                         >
@@ -309,7 +316,7 @@
                         </div>
                     </div>
                 </div>
-                {{ TodoStatus }}
+                <!-- {{ TodoStatus }}  배열 움직임 감지를 위한 디버깅 element --> 
             </div>
         </div>
     </transition>
@@ -348,17 +355,10 @@ const readyRawInput = ref("");
 const ongoingRawInput = ref("");
 const doneRawInput = ref("");
 
-// const itemBoxOver = ref({
-//     noneBoxOver: false,
-//     readyBoxOver: false,
-//     ongoingBoxOver: false,
-//     doneBoxOver: false,
-// });
-
 const searchData = ref("");
 const searchResult = ref({
-    searchResultRetrun : "",
-    ifSearched : false
+    searchResultRetrun: "",
+    ifSearched: false,
 });
 
 const modalFlag = ref(false);
@@ -387,34 +387,37 @@ window.addEventListener("mouseup", () => {
     // moveTodo();
 });
 
-const updateSearchData = () => {
-    console.log(searchData.value);
+const updateSearchData = (event) => {
+    console.log(event.target); // 입력창에 변화 감지
 
     document.querySelector(".search-result").style.opacity = "1"; // 값 검색시 result 창 띄우기
-    if(searchData.value == "") document.querySelector(".search-result").style.opacity = "0"; // 값 검색 input이 null일 경우 창 숨기기
+    if (searchData.value == "")
+        document.querySelector(".search-result").style.opacity = "0"; // 값 검색 input이 null일 경우 창 숨기기
 
     searchResult.value.ifSearched = false; // 검색된 값을 없음으로 초기화
     for (const [key, value] of Object.entries(TodoStatus.value)) {
-        value.forEach(data => {
-            if(data == searchData.value){
+        value.forEach((data) => {
+            if (data == searchData.value) {
                 searchResult.value.searchResultRetrun = `${key}에 값'${searchData.value}'가 검색되었습니다.`;
                 searchResult.value.ifSearched = true;
-                document.querySelector(".search-result").style.width = "280px";  
+                document.querySelector(".search-result").style.width = "280px";
                 return;
-            } else { 
+            } else {
                 searchResult.value.searchResultRetrun = "검색된 값 없음";
-                document.querySelector(".search-result").style.width = "100px";    
+                document.querySelector(".search-result").style.width = "100px";
             }
-        })
-        if(searchResult.value.ifSearched == true) return;
-        console.log("같은 값이 존재합니다!" + searchResult.value); 
+        });
+        if (searchResult.value.ifSearched == true) return;
+        // console.log("같은 값이 존재합니다!" + searchResult.value);  디버그 콘솔
     }
-    
-}
+};
 
 watchEffect(() => {
     console.log(isDragFlag.value); // 플레그 디버그를 위한 console.log
     console.log(TodoStatus.value);
+    console.log("값이 수정되었습니다!");
+
+    localStorage.setItem("AllStatus", JSON.stringify(TodoStatus.value)); // 값 변경 및 초기화면 로딩 시 LocalStrage에 JSON.stringify로 값 입력
 });
 
 const onDragStart = (e) => {
@@ -428,31 +431,22 @@ const onDragStart = (e) => {
 };
 
 const onDragover = (e) => {
-    // console.log("드래그중!");
-    // console.log(e.target.id);
-    // if (e.target.id == "none" || e.target.parentElement.id == "none")
-    //     itemBoxOver.value.noneBoxOver = true;
     e.preventDefault(); // 기본적으로 드래그를 막고 있던 이벤트를 막음. -> 드래그를 가능하게 함.
 };
 
 const onDrop = (e) => {
     const previousArrIndex = JSON.parse(
         e.dataTransfer.getData("test")
-    ).targetID; // 이전 배열에서 선택(끌어온) 인덱스
+    ).targetID; // 이전 배열에서 선택(끌어온)한 인덱스
     const previousArrName = JSON.parse(
         e.dataTransfer.getData("test")
-    ).previousArrName;
+    ).previousArrName; // 옮겨지지기 전 배열
 
-    // e.target.id detail-box즉 todo를 놓는 배경 박스
-    // Object.keys(TodoStatus.value)[1] : TodoStatus Object nonArr 이름
-
-    console.log("onDrop 된 개체에 ID :" + e.target.id);
+    // console.log("onDrop 된 개체에 ID :" + e.target.id); // item이 드롭된 배열
 
     let onDropedID = e.target.id;
     if (!isNaN(e.target.id)) onDropedID = e.target.parentElement.id; // e.target.id 가 숫자로 반환될 시(다른 TODO 위에 올라갔을 경우)
     if (onDropedID === "") onDropedID = e.target.parentElement.parentElement.id; // input에 드래그시 오류 방지를 위한 예외처리
-
-    console.log("결론적으로 onDroped값:" + onDropedID);
 
     if (previousArrName == "none" && onDropedID != "none") {
         // TODO를 가져온 값의 아이디가 none일때
@@ -462,30 +456,24 @@ const onDrop = (e) => {
             TodoStatus.value.readyArr.push(
                 TodoStatus.value.noneArr[previousArrIndex]
             );
-            TodoStatus.value.noneArr.splice(previousArrIndex, 1);
-            console.log("slice완료" + TodoStatus.value.noneArr);
         }
         console.log("키 이름" + Object.keys(TodoStatus.value)[1]); // 1번 인덱스는 ready
-
         if (Object.keys(TodoStatus.value)[2] == onDropedID + "Arr") {
             // 가져다가 놓은 위치가 ongoing일때
             console.log("ongoing에다가 놓았음!");
             TodoStatus.value.ongoingArr.push(
                 TodoStatus.value.noneArr[previousArrIndex]
             );
-            TodoStatus.value.noneArr.splice(previousArrIndex, 1);
-            console.log("slice완료" + TodoStatus.value.noneArr);
         }
-
         if (Object.keys(TodoStatus.value)[3] == onDropedID + "Arr") {
             // 가져다가 놓은 위치가 done일때
             console.log("ongoing에다가 놓았음!");
             TodoStatus.value.doneArr.push(
                 TodoStatus.value.noneArr[previousArrIndex]
             );
-            TodoStatus.value.noneArr.splice(previousArrIndex, 1);
-            console.log("slice완료" + TodoStatus.value.noneArr);
         }
+        TodoStatus.value.noneArr.splice(previousArrIndex, 1);
+        console.log("slice완료" + TodoStatus.value.noneArr);
     }
 
     if (previousArrName == "ready" && onDropedID != "ready") {
@@ -549,21 +537,16 @@ const onDrop = (e) => {
 
 const editItem = (index) => {
     modalFlag.value = true;
-    index;
+    index; // 값 수정을 위한 함수.
 };
 
-const noneSection__AddTodo = (e) => {
+const noneSection__AddTodo = () => {
     console.log("nonRawInput 에 들어가는 값.");
     console.log(noneRawInput.value);
     noneRawInput.value != ""
         ? TodoStatus.value.noneArr.push(noneRawInput.value)
-        : alert("입력창에 값을 입력해주세요!");
-
-    console.log("addtdtd");
-    console.log(e.target.parentElement.parentElement.id); // 입력한 값이 포함되어 있는 box-detail
-
+        : alert("입력창에 값을 입력해주세요!"); 
     noneRawInput.value = "";
-    console.log(TodoStatus.value);
 };
 
 const readySection__AddTodo = () => {
@@ -705,15 +688,22 @@ const doneSection__AddTodo = () => {
 
     transition: 0.3s;
 }
-.search-addnew > .search-text:hover{
+.search-addnew > .search-text:hover {
     background-color: #eee;
     margin-left: 5px;
 
     transition: 0.3s;
 }
-.search-addnew > .search-text::placeholder{ transition: 0.3s; }
-.search-addnew > .search-text:hover::placeholder{ font-size: 14px; color: rgb(148, 148, 148); padding-left: 10px; transition: 0.3s;}
-.search-addnew > .search-text:focus{
+.search-addnew > .search-text::placeholder {
+    transition: 0.3s;
+}
+.search-addnew > .search-text:hover::placeholder {
+    font-size: 14px;
+    color: rgb(148, 148, 148);
+    padding-left: 10px;
+    transition: 0.3s;
+}
+.search-addnew > .search-text:focus {
     outline: none;
 }
 
@@ -1048,7 +1038,7 @@ const doneSection__AddTodo = () => {
     border: none;
     border-radius: 20px;
 }
-.modal-box input{
+.modal-box input {
     display: block;
 
     border: none;
@@ -1064,13 +1054,12 @@ const doneSection__AddTodo = () => {
     text-align: center;
     transition: 0.3s;
 }
-.modal-box input:hover{
+.modal-box input:hover {
     transform: scale(1.03);
 }
-.modal-box input:focus{
+.modal-box input:focus {
     outline: none;
 }
-
 
 .modal-box button {
     width: 60px;
@@ -1082,13 +1071,13 @@ const doneSection__AddTodo = () => {
     border: 1px solid rgb(218, 218, 218);
     border-radius: 5px;
 
-background-color: #fff;
+    background-color: #fff;
     cursor: pointer;
 }
-.modal-box .delete-item{
+.modal-box .delete-item {
     background-color: rgb(255, 86, 86);
 }
-.search-result{
+.search-result {
     display: block;
     position: absolute;
 
