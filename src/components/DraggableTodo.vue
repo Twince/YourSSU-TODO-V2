@@ -326,6 +326,7 @@
 import { ref, watchEffect } from "vue";
 import axios from "axios";
 
+// 초기 렌더링시 Axios를 이용한 데이터 가져오기
 axios
     .get("https://my-json-server.typicode.com/jaewoong2/recruiting/0")
     .then((response) => {
@@ -387,6 +388,7 @@ window.addEventListener("mouseup", () => {
     // moveTodo();
 });
 
+// TASK 검색 기능
 const updateSearchData = (event) => {
     console.log(event.target); // 입력창에 변화 감지
 
@@ -398,7 +400,7 @@ const updateSearchData = (event) => {
     for (const [key, value] of Object.entries(TodoStatus.value)) {
         value.forEach((data) => {
             if (data == searchData.value) {
-                searchResult.value.searchResultRetrun = `${key}에 값'${searchData.value}'가 검색되었습니다.`;
+                searchResult.value.searchResultRetrun = `${key}에 값'${searchData.value}'가 검색되었습니다!`;
                 searchResult.value.ifSearched = true;
                 document.querySelector(".search-result").style.width = "280px";
                 return;
@@ -412,6 +414,7 @@ const updateSearchData = (event) => {
     }
 };
 
+// 변경 감지
 watchEffect(() => {
     console.log(isDragFlag.value); // 플레그 디버그를 위한 console.log
     console.log(TodoStatus.value);
@@ -420,6 +423,7 @@ watchEffect(() => {
     localStorage.setItem("AllStatus", JSON.stringify(TodoStatus.value)); // 값 변경 및 초기화면 로딩 시 LocalStrage에 JSON.stringify로 값 입력
 });
 
+// 드래그가 시작되었을시 정보 감지
 const onDragStart = (e) => {
     e.dataTransfer.setData(
         "test",
@@ -434,6 +438,7 @@ const onDragover = (e) => {
     e.preventDefault(); // 기본적으로 드래그를 막고 있던 이벤트를 막음. -> 드래그를 가능하게 함.
 };
 
+// 마우스 Drag&Drap시 배열 이동
 const onDrop = (e) => {
     const previousArrIndex = JSON.parse(
         e.dataTransfer.getData("test")
@@ -540,6 +545,7 @@ const editItem = (index) => {
     index; // 값 수정을 위한 함수.
 };
 
+// 값 입력 함수
 const noneSection__AddTodo = () => {
     console.log("nonRawInput 에 들어가는 값.");
     console.log(noneRawInput.value);
