@@ -330,7 +330,6 @@ import axios from "axios";
 axios
     .get("https://my-json-server.typicode.com/jaewoong2/recruiting/0")
     .then((response) => {
-        // 실제 API를 요청한다/
         response.data.forEach((data) => {
             if (data.state == "none") TodoStatus.value.noneArr.push(data.value);
             else if (data.state == "ready")
