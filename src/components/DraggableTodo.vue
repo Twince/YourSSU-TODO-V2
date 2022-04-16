@@ -351,42 +351,40 @@ const TodoStatus = ref({
     doneArr: [],
 });
 
-const noneRawInput = ref(""); //input 입력
+const noneRawInput = ref(""); //각각 입력 감지 변수
 const readyRawInput = ref("");
 const ongoingRawInput = ref("");
 const doneRawInput = ref("");
 
 const searchData = ref("");
-const searchResult = ref({
+const searchResult = ref({ // 검색시 반환 값과 겁색 여부 변수
     searchResultRetrun: "",
     ifSearched: false,
 });
 
-const modalFlag = ref(false);
-const isDragFlag = ref(false);
-const selectElement = ref();
+const modalFlag = ref(false); // modal 여부 변수(flag)
+// const selectElement = ref();
+// const isDragFlag = ref(false);
 
-const mousePosition = ref({
-    left: 0,
-    top: 0,
-});
+// 
 
-const mouseDown = (e) => {
-    isDragFlag.value = true;
-    selectElement.value = e.target;
-    // e.target.parentElement.style.height = "0px"; // 에니메이션을 주기 위해 .item-container를 0px로 변경.
 
-    mousePosition.value.left = e.offsetX; // 이벤트의 대상
-    mousePosition.value.top = e.offsetY;
-}; // 마우스의 클릭을 감지(드래그)
+// const mouseDown = (e) => { 
+//     isDragFlag.value = true;
+//     selectElement.value = e.target;
+//     // e.target.parentElement.style.height = "0px"; // 에니메이션을 주기 위해 .item-container를 0px로 변경.
 
-window.addEventListener("mouseup", () => {
-    if (!isDragFlag.value) return; // 드래그중이 아닐 시 함수 실행 취소
-    isDragFlag.value = false; // 드래그가 종료되었으므로 flag 변환
-    selectElement.value.style.height = "50px"; // item-continer에 공간 차지
-    selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
-    // moveTodo();
-});
+//     mousePosition.value.left = e.offsetX; // 이벤트의 대상
+//     mousePosition.value.top = e.offsetY;
+// }; // 마우스의 클릭을 감지(드래그) -> 드래그 시 에니메이션을 적용시키기 위한 함수
+
+// window.addEventListener("mouseup", () => {
+//     if (!isDragFlag.value) return; // 드래그중이 아닐 시 함수 실행 취소
+//     isDragFlag.value = false; // 드래그가 종료되었으므로 flag 변환
+//     selectElement.value.style.height = "50px"; // item-continer에 공간 차지
+//     selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
+//     // moveTodo();
+// });
 
 // TASK 검색 기능
 const updateSearchData = (event) => {
@@ -394,12 +392,15 @@ const updateSearchData = (event) => {
 
     document.querySelector(".search-result").style.opacity = "1"; // 값 검색시 result 창 띄우기
     if (searchData.value == "")
-        document.querySelector(".search-result").style.opacity = "0"; // 값 검색 input이 null일 경우 창 숨기기
+        document.querySelector(".search-result").style.opacity = "0"; // 값 검ㅊ색 input이 null일 경우 창 숨기기
 
     searchResult.value.ifSearched = false; // 검색된 값을 없음으로 초기화
     for (const [key, value] of Object.entries(TodoStatus.value)) {
         value.forEach((data) => {
+            console.log(key, value);
             if (data == searchData.value) {
+                console.log("같은 값 검색");
+                console.log(searchResult.value.searchResultRetrun);
                 searchResult.value.searchResultRetrun = `${key}에 값'${searchData.value}'가 검색되었습니다!`;
                 searchResult.value.ifSearched = true;
                 document.querySelector(".search-result").style.width = "280px";
@@ -416,8 +417,8 @@ const updateSearchData = (event) => {
 
 // 변경 감지
 watchEffect(() => {
-    console.log(isDragFlag.value); // 플레그 디버그를 위한 console.log
-    console.log(TodoStatus.value);
+    // console.log(isDragFlag.value); 
+    console.log(TodoStatus.value); // 플레그 디버그를 위한 console.log들
     console.log("값이 수정되었습니다!");
 
     localStorage.setItem("AllStatus", JSON.stringify(TodoStatus.value)); // 값 변경 및 초기화면 로딩 시 LocalStrage에 JSON.stringify로 값 입력
