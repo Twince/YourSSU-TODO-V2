@@ -366,25 +366,6 @@ const modalFlag = ref(false); // modal 여부 변수(flag)
 // const selectElement = ref();
 // const isDragFlag = ref(false);
 
-// 
-
-
-// const mouseDown = (e) => { 
-//     isDragFlag.value = true;
-//     selectElement.value = e.target;
-//     // e.target.parentElement.style.height = "0px"; // 에니메이션을 주기 위해 .item-container를 0px로 변경.
-
-//     mousePosition.value.left = e.offsetX; // 이벤트의 대상
-//     mousePosition.value.top = e.offsetY;
-// }; // 마우스의 클릭을 감지(드래그) -> 드래그 시 에니메이션을 적용시키기 위한 함수
-
-// window.addEventListener("mouseup", () => {
-//     if (!isDragFlag.value) return; // 드래그중이 아닐 시 함수 실행 취소
-//     isDragFlag.value = false; // 드래그가 종료되었으므로 flag 변환
-//     selectElement.value.style.height = "50px"; // item-continer에 공간 차지
-//     selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
-//     // moveTodo();
-// });
 
 // TASK 검색 기능
 const updateSearchData = (event) => {
@@ -541,10 +522,7 @@ const onDrop = (e) => {
     }
 };
 
-const editItem = (index) => {
-    modalFlag.value = true;
-    index; // 값 수정을 위한 함수.
-};
+
 
 // 값 입력 함수
 const noneSection__AddTodo = () => {
@@ -574,6 +552,32 @@ const doneSection__AddTodo = () => {
         : alert("입력창에 값을 입력해주세요!");
     doneRawInput.value = "";
 };
+
+
+/* ============================= 이전 코드 ===============================*/
+
+// const mouseDown = (e) => { 
+//     isDragFlag.value = true;
+//     selectElement.value = e.target;
+//     // e.target.parentElement.style.height = "0px"; // 에니메이션을 주기 위해 .item-container를 0px로 변경.
+
+//     mousePosition.value.left = e.offsetX; // 이벤트의 대상
+//     mousePosition.value.top = e.offsetY;
+// }; // 마우스의 클릭을 감지(드래그) -> 드래그 시 에니메이션을 적용시키기 위한 함수
+
+// window.addEventListener("mouseup", () => {
+//     if (!isDragFlag.value) return; // 드래그중이 아닐 시 함수 실행 취소
+//     isDragFlag.value = false; // 드래그가 종료되었으므로 flag 변환
+//     selectElement.value.style.height = "50px"; // item-continer에 공간 차지
+//     selectElement.value.style.position = ""; // 드래그하며 지정했던 absolute를 삭제
+//     // moveTodo();
+// });
+
+// const editItem = (index) => {
+//     modalFlag.value = true;
+//     index; // 값 수정을 위한 함수.
+// };
+
 </script>
 
 <style scope>
